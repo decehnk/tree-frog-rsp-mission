@@ -21,7 +21,7 @@ int main(void) {
     printf("청개구리 가위, 바위, 보를 시작합니다.\n");
 
     while (re == 1) {
-        printf("가위, 바위, 보를 입력해주세요 :");
+        printf("가위, 바위, 보를 입력해주세요 : ");
         scanf_s("%s", &ch, 20);
         if (strcmp(ch, ch0[0]) == 0) a = 0;
         else if (strcmp(ch, ch0[1]) == 0) a = 1;

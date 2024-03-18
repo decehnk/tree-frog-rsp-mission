@@ -1,59 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h> // srand, rand 함수
-#include <time.h> // time 함수
-#include <string.h> // strcmp 함수
-#include <Windows.h> // sleep 함수
+#include <future> // 
+#include <chrono> // chrono
+#include <string> // strcmp, 
 
-
-
-
-int main(void) {
-    int random;   // 0=가위 , 1=바위, 2=보
-    int re = 1;
-    char ch;
-    char ch0[][20] = { "가위", "바위", "보", "이겼다", "개굴", "졌다" };
-    int q;   //                               0        1      2
-    int t; // 0=승리, 1=개굴, 2=패배
-    int num = 1;
-    int *ptr = &num;
-    
-    srand(time(NULL));  // rand 초기화
-    printf("청개구리 가위, 바위, 보를 시작합니다.\n");
-
-    while (re == 1) {
-
-        random = rand() % 3;
-
-        int a = pick();
-        
-        int t = calculate(a, random);
-
-        printf("상대는 [%s]를 냈습니다 : ", ch0[random]);
-        time_t time_s = time(NULL);
-            scanf_s("%s", &ch, 20);
-            time_t time_f = time(NULL);
-            
-
-            if (q == t && time_f - time_s <= 3) printf("승리하셨습니다!");
-            else if (time_f - time_s > 3) printf("패배하셨습니다!(시간초과)");
-            else printf("패배하셨습니다!");
-            
-   
-            re = restart();
-    }
-
-    return 0;
-}
 int pick() {
     char ch[20];
     char ch0[][20] = { "가위", "바위", "보" };
-    printf("가위, 바위, 보를 입력해주세요 :");
+    printf("가위, 바위, 보를 입력해주세요 : ");
     scanf_s("%s", &ch, 20);
     if (strcmp(ch, ch0[0]) == 0) return 0;
     else if (strcmp(ch, ch0[1]) == 0) return 1;
     else if (strcmp(ch, ch0[2]) == 0) return 2;
 }
-
 int calculate(int a, int random) {
     switch (a) {
     case 0: if (random == 0) return 1;
@@ -73,15 +32,52 @@ int restart() {
     scanf_s("%d", &re);
     return re;
 }
+void final(int t) {
+    std::future<std::string> input_future = std::async(std::launch::async, []() {
+        std::string input;
+        std::cin >> input;
+        return input;
+        });
 
-void final(char ch) {
-    char ch;
-    int q;
-    bool f = true;
-    while (f) {
-        if (strcmp(ch, ch0[3]) == 0) q = 0;
-        else if (strcmp(ch, ch0[4]) == 0) q = 1;
-        else if (strcmp(ch, ch0[5]) == 0) q = 2;
+    // 입력이 있는지 확인
+    if (input_future.wait_for(std::chrono::seconds(3)) == std::future_status::ready) {
+        std::string input = input_future.get(); // 입력된 문자열 가져오기
+        std::string str1 = "이겼다";
+        std::string str2 = "개굴";
+        std::string str3 = "졌다";
+        int q;
+        if (input == str1) q = 0;
+        else if (input == str2) q = 1;
+        else if (input == str3) q = 2;
+        if (q == t) printf("승리하셨습니다!");
+        else printf("패배하셨습니다!");
+
     }
-    
+    else {
+        printf("\n패배하셨습니다!\n");
+    }
+}
+int main(void) {
+    int re = 1;
+    char ch0[][20] = {"가위", "바위", "보"};
+   
+    srand(time(NULL));  // rand 초기화
+    printf("청개구리 가위, 바위, 보를 시작합니다.\n");
+
+    while (re == 1) {
+
+        int random = rand() % 3;
+
+        int a = pick();
+
+        int t = calculate(a, random);
+
+        printf("상대는 [%s]를 냈습니다 : ", ch0[random]);
+        
+        final(t);
+       
+        re = restart();
+    }
+
+    return 0;
 }

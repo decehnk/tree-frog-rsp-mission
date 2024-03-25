@@ -66,13 +66,11 @@ int main(void) {
             else if (input == str3) q = 2;
             if (q == t) {
                 printf("승리하셨습니다!");
-                re = restart();
             }
               
             else {
                 printf("패배하셨습니다!");
-                re = restart();
-            }
+            } re = restart();
         }
         else {
             printf("\n패배하셨습니다!");
